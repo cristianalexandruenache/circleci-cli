@@ -72,6 +72,7 @@ jobs:
       - image: supinf/gometalinter:latest
     environment:
       CGO_ENABLED: 0
+      SHELL: /bin/bash
     working_directory: /go/src/github.com/CircleCI-Public/circleci-cli
     steps:
       - checkout
