@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   codecov: circleci/codecov-clojure@0.0.4
   shellcheck: circleci/shellcheck@1.2.0
-  slack: circleci/slack@volatile
+  slack-orb: circleci/slack@volatile
 
 executors:
   go:
@@ -23,6 +23,11 @@ commands:
       - save_cache:
           key: v1-gomod-{{ checksum "go.sum" }}
           paths: [/go/pkg/mod]
+-  # Wrap the slack/notify command to only notify on failures
+  slack:
+    steps:
+      - slack/notify:
+          fail_only: true
 
 jobs:
   test:
@@ -31,7 +36,7 @@ jobs:
       - checkout
       - gomod
       - run: make test
-      - slack/notify
+      - slack
 
   coverage:
     executor: go
@@ -46,7 +51,7 @@ jobs:
           destination: coverage.txt
       - codecov/upload:
           path: coverage.txt
-      - slack/notify
+      - slack
 
   docs:
     executor: go
@@ -60,7 +65,7 @@ jobs:
           destination: docs
       - run: ./.circleci/generate-docs.sh
       - run: ./.circleci/deploy-gh-pages.sh
-      - slack/notify
+      - slack
 
   lint:
     docker:
@@ -77,7 +82,7 @@ jobs:
             go get -u github.com/golang/dep/cmd/dep
             dep init
       - run: gometalinter ./...
-      - slack/notify
+      - slack
 
   deploy:
     executor: go
@@ -133,7 +138,7 @@ jobs:
       - store_artifacts:
           path: ./dist
           destination: dist
-      - slack/notify
+      - slack
 
   snap:
     docker:
@@ -152,7 +157,7 @@ jobs:
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
             snapcraft push *.snap --release stable
-      - slack/notify
+      - slack
 
   brew-deploy:
     macos:
@@ -171,7 +176,7 @@ jobs:
           git config --global user.name "$GH_NAME" > /dev/null 2>&1
       - run: brew --version
       - run: ./.circleci/brew-deploy.sh
-      - slack/notify
+      - slack
 
 workflows:
   version: 2
