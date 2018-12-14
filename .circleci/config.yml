@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   codecov: circleci/codecov-clojure@0.0.4
   shellcheck: circleci/shellcheck@1.2.0
+  slack: circleci/slack@volatile
 
 executors:
   go:
@@ -30,6 +31,7 @@ jobs:
       - checkout
       - gomod
       - run: make test
+      - slack/notify
 
   coverage:
     executor: go
@@ -44,6 +46,7 @@ jobs:
           destination: coverage.txt
       - codecov/upload:
           path: coverage.txt
+      - slack/notify
 
   docs:
     executor: go
@@ -57,6 +60,7 @@ jobs:
           destination: docs
       - run: ./.circleci/generate-docs.sh
       - run: ./.circleci/deploy-gh-pages.sh
+      - slack/notify
 
   lint:
     docker:
@@ -73,6 +77,7 @@ jobs:
             go get -u github.com/golang/dep/cmd/dep
             dep init
       - run: gometalinter ./...
+      - slack/notify
 
   deploy:
     executor: go
@@ -128,6 +133,7 @@ jobs:
       - store_artifacts:
           path: ./dist
           destination: dist
+      - slack/notify
 
   snap:
     docker:
@@ -146,6 +152,7 @@ jobs:
             mkdir .snapcraft
             echo $SNAPCRAFT_LOGIN_FILE | base64 --decode --ignore-garbage > .snapcraft/snapcraft.cfg
             snapcraft push *.snap --release stable
+      - slack/notify
 
   brew-deploy:
     macos:
@@ -164,6 +171,7 @@ jobs:
           git config --global user.name "$GH_NAME" > /dev/null 2>&1
       - run: brew --version
       - run: ./.circleci/brew-deploy.sh
+      - slack/notify
 
 workflows:
   version: 2
