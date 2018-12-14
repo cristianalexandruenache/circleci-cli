@@ -23,11 +23,11 @@ commands:
       - save_cache:
           key: v1-gomod-{{ checksum "go.sum" }}
           paths: [/go/pkg/mod]
--  # Wrap the slack/notify command to only notify on failures
+  # Wrap the slack/notify command to only notify on failures
   slack:
     steps:
-      - slack-orb/notify:
-          fail_only: true
+      - slack-orb/status:
+          fail_only: "true"
 
 jobs:
   test:
