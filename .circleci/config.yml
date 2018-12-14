@@ -78,9 +78,13 @@ jobs:
       - run:
           name: Install deps to use with gometalinter
           command: |
-            apk --no-cache add --virtual git bash
+            apk --no-cache add --virtual git
             go get -u github.com/golang/dep/cmd/dep
             dep init
+      - run:
+          name: Install bash to use with slack notifications
+          command: |
+            apk --no-cache add bash
       - run: gometalinter ./...
       - slack
 
