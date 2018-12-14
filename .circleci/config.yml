@@ -26,7 +26,7 @@ commands:
 -  # Wrap the slack/notify command to only notify on failures
   slack:
     steps:
-      - slack/notify:
+      - slack-orb/notify:
           fail_only: true
 
 jobs:
