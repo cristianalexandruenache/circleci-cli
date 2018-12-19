@@ -18,8 +18,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// GQLErrorsCollection is a slice of errors returned by the GraphQL server.
-// Each error is made up of a GQLResponseError type.
 type GQLErrorsCollection []GQLResponseError
 
 // Error turns a GQLErrorsCollection into an acceptable error string that can be printed to the user.
