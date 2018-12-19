@@ -72,20 +72,15 @@ jobs:
       - image: supinf/gometalinter:latest
     environment:
       CGO_ENABLED: 0
-      SHELL: /bin/bash
     working_directory: /go/src/github.com/CircleCI-Public/circleci-cli
     steps:
       - checkout
       - run:
           name: Install deps to use with gometalinter
           command: |
-            apk --no-cache add --virtual git
+            apk --no-cache add --virtual git bash
             go get -u github.com/golang/dep/cmd/dep
             dep init
-      - run:
-          name: Install bash to use with slack notifications
-          command: |
-            apk --no-cache add bash
       - run: gometalinter ./...
       - slack
 
