@@ -3,7 +3,7 @@ version: 2.1
 orbs:
   codecov: circleci/codecov-clojure@0.0.4
   shellcheck: circleci/shellcheck@1.2.0
-  slack-orb: zzak/slack@dev:volatile
+  slack-orb: circleci/slack@dev:volatile
 
 executors:
   go:
